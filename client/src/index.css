@@ -50,7 +50,7 @@ body {
 }
 
 .badge-pro {
-  @apply bg-brand-primary/10 text-brand-primary border border-brand-primary/20 text-[10px] uppercase font-black px-2 py-0.5 rounded-md tracking-tighter;
+  @apply bg-violet-100/80 text-violet-600 border border-violet-200 text-[10px] uppercase font-black px-2 py-0.5 rounded-md tracking-tighter;
 }
 
 /* Custom Scrollbar */
@@ -70,5 +70,5 @@ h1, h2, h3 {
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-secondary;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-pink-500;
 }
