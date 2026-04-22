@@ -161,42 +161,74 @@ const Dashboard = () => {
                     </div>
                 </header>
 
-                {user?.isPro && (
-                    <div className="max-w-4xl mx-auto mb-10 grid grid-cols-1 gap-6">
-                        {/* Insight Hub */}
-                        <div className="daily-card p-6 border-brand-primary/10">
-                            <div className="flex justify-between items-center mb-4">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Target size={14} className="text-brand-primary" /> Insight Hub
-                                </h4>
-                                <span className="text-xl font-black text-slate-800 dark:text-white">{completionRate}%</span>
+                <div className="max-w-4xl mx-auto px-4">
+                    {/* Premium Pro Promo Banner */}
+                    {!user?.isPro && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-[length:200%_auto] animate-gradient-slow p-[1px] rounded-[2.5rem] mb-12 shadow-2xl shadow-brand-primary/20 group relative overflow-hidden"
+                        >
+                            <div className="bg-white dark:bg-slate-900 rounded-[2.45rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 blur-[100px] -mr-32 -mt-32 transition-transform group-hover:scale-150 duration-700" />
+                                
+                                <div className="relative z-10 text-center md:text-left">
+                                    <div className="flex items-center gap-2 mb-4 justify-center md:justify-start">
+                                        <div className="bg-pastel-lavender p-2 rounded-xl text-brand-primary">
+                                            <Sparkles size={20} />
+                                        </div>
+                                        <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em]">Premium Experience</span>
+                                    </div>
+                                    <h2 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-3 tracking-tighter">Unlock Your Full Potential</h2>
+                                    <p className="text-slate-400 font-bold text-sm max-w-sm">Upgrade for **Insight Hub**, **Focus Mode**, and Advanced Priority Engine.</p>
+                                </div>
+
+                                <button 
+                                    onClick={() => document.getElementById('sidebar-pro-btn')?.click()}
+                                    className="relative z-10 px-8 py-5 bg-brand-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                                >
+                                    Go Pro Today
+                                </button>
                             </div>
-                            <div className="w-full h-3 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${completionRate}%` }}
-                                    className="h-full bg-gradient-to-r from-brand-primary to-brand-secondary"
-                                />
+                        </motion.div>
+                    )}
+
+                    {user?.isPro && (
+                        <div className="mb-10 grid grid-cols-1 gap-6">
+                            {/* Insight Hub */}
+                            <div className="daily-card p-6 border-brand-primary/10">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <Target size={14} className="text-brand-primary" /> Insight Hub
+                                    </h4>
+                                    <span className="text-xl font-black text-slate-800 dark:text-white">{completionRate}%</span>
+                                </div>
+                                <div className="w-full h-3 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                                    <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${completionRate}%` }}
+                                        className="h-full bg-gradient-to-r from-brand-primary to-brand-secondary"
+                                    />
+                                </div>
+                                <p className="text-[9px] font-bold text-slate-400 mt-3 uppercase tracking-tighter">Your daily efficiency updated in real-time</p>
                             </div>
-                            <p className="text-[9px] font-bold text-slate-400 mt-3 uppercase tracking-tighter">Your daily efficiency updated in real-time</p>
+                        </div>
+                    )}
+
+                    <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
+                        <div className="relative flex-1 group w-full">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-primary transition-colors" size={16} />
+                            <input 
+                                type="text" 
+                                placeholder="Find quickly..." 
+                                className="w-full h-12 pl-12 pr-4 bg-white/50 dark:bg-slate-900 border border-white/50 dark:border-white/5 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold shadow-sm text-slate-800 dark:text-white"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                         </div>
                     </div>
-                )}
 
-                <div className="max-w-4xl mx-auto mb-8 flex flex-col md:flex-row gap-4 items-center">
-                    <div className="relative flex-1 group w-full">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-primary transition-colors" size={16} />
-                        <input 
-                            type="text" 
-                            placeholder="Find quickly..." 
-                            className="w-full h-12 pl-12 pr-4 bg-white/50 dark:bg-slate-900 border border-white/50 dark:border-white/5 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold shadow-sm text-slate-800 dark:text-white"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-                <div className="max-w-4xl mx-auto space-y-3">
+                    <div className="space-y-3">
                     <AnimatePresence mode="popLayout">
                         {filteredTasks.length > 0 ? (
                             filteredTasks.map((task, index) => (
@@ -247,6 +279,7 @@ const Dashboard = () => {
                         )}
                     </AnimatePresence>
                 </div>
+            </div>
 
                 {/* Modals for Add and Edit */}
                 <AnimatePresence>
