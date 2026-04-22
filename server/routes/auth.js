@@ -107,16 +107,18 @@ router.post('/signup', async (req, res) => {
 
         // Send Verification Email
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: `"TaskFlow Support" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: 'Verify Your Email - TaskFlow',
+            subject: `Action Required: ${otp} is your TaskFlow verification code`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                    <h2 style="color: #c026d3; text-align: center;">Welcome to TaskFlow!</h2>
-                    <p style="color: #333;">Please verify your email address to activate your account.</p>
+                    <h2 style="color: #c026d3; text-align: center;">Account Verification</h2>
+                    <p style="color: #333;">Hello,</p>
+                    <p style="color: #333;">Welcome to TaskFlow! Use the verification code below to activate your account:</p>
                     <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
                     </div>
+                    <p style="color: #333;">This code is valid for 24 hours.</p>
                 </div>
             `
         };
@@ -211,9 +213,9 @@ router.post('/login', async (req, res) => {
             subject: `Action Required: ${otp} is your TaskFlow verification code`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                    <h2 style="color: #c026d3; text-align: center;">Security Verification</h2>
+                    <h2 style="color: #c026d3; text-align: center;">Security Code</h2>
                     <p style="color: #333;">Hello,</p>
-                    <p style="color: #333;">Using a password is only half the battle. Use the code below to complete your login:</p>
+                    <p style="color: #333;">Use the verification code below to complete your login to TaskFlow:</p>
                     <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
                     </div>
@@ -259,9 +261,9 @@ router.post('/forgot-password', async (req, res) => {
 
         // Send Email using Nodemailer
         const mailOptions = {
-            from: process.env.EMAIL_USER, // Sender address
+            from: `"TaskFlow Support" <${process.env.EMAIL_USER}>`,
             to: email, // Receiver address
-            subject: 'Password Reset OTP - TaskFlow',
+            subject: `Action Required: ${otp} is your TaskFlow reset code`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
                     <h2 style="color: #c026d3; text-align: center;">Password Reset Request</h2>
