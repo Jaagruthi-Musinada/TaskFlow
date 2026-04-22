@@ -38,8 +38,8 @@ const Login = () => {
     };
 
     const handleGoogleLogin = () => {
-        // Corrected URL matching the server mount and console settings
-        window.location.href = 'http://localhost:5000/auth/google';
+        const apiBase = (import.meta.env.VITE_API_URL || '').replace('/api', '');
+        window.location.href = `${apiBase}/auth/google`;
     };
 
     return (
