@@ -186,7 +186,7 @@ const Sidebar = ({ activeFilter, setActiveFilter, isOpen, toggleSidebar, logout,
                                 {user?.isPro ? 'Welcome Pro!' : 'Go Pro Today'}
                             </h3>
                             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-white">
-                                {user?.isPro ? 'All Features Unlocked' : 'Unlock 4 Features'}
+                                {user?.isPro ? 'All Features Unlocked' : 'Unlock 3 Features'}
                             </div>
                         </div>
                     </button>
