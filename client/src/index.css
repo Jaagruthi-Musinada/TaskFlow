@@ -4,26 +4,70 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-family: 'Outfit', sans-serif;
-  }
-
-  body {
-    @apply antialiased text-gray-800 bg-gray-50 dark:bg-dark-bg dark:text-gray-100 transition-colors duration-300;
-  }
+:root {
+  /* DailyList Pastel Palette */
+  --pastel-pink: #FFD6E8;
+  --pastel-lavender: #E8D5FF;
+  --pastel-green: #D5FFD6;
+  --pastel-blue: #D5E8FF;
+  --pastel-yellow: #FFFED5;
+  --pastel-purple-deep: #7C3AED;
+  
+  --brand-primary: #8B5CF6; /* Lavender Purple */
+  --brand-secondary: #EC4899; /* Pink */
+  
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
 }
 
-@layer utilities {
-  .glass {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl dark:bg-dark-card/70 dark:border-white/10;
-  }
+.dark {
+  --glass-bg: rgba(15, 15, 20, 0.8);
+  --glass-border: rgba(255, 255, 257, 0.05);
+}
 
-  .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/40 shadow-lg transition-all duration-300 dark:bg-dark-card/80 dark:border-white/5;
-  }
+body {
+  font-family: 'Outfit', sans-serif;
+  @apply antialiased text-slate-800 bg-white dark:bg-slate-950 dark:text-slate-100;
+  background: 
+    radial-gradient(at 0% 0%, var(--pastel-pink) 0, transparent 40%),
+    radial-gradient(at 100% 0%, var(--pastel-lavender) 0, transparent 40%),
+    radial-gradient(at 100% 100%, var(--pastel-blue) 0, transparent 40%),
+    radial-gradient(at 0% 100%, var(--pastel-green) 0, transparent 40%);
+  background-attachment: fixed;
+}
 
-  .glass-input {
-    @apply bg-white/50 border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all dark:bg-dark-card/50 dark:border-gray-700 dark:text-white dark:placeholder-gray-500;
-  }
+.daily-card {
+  @apply bg-white/60 dark:bg-slate-900/40 backdrop-blur-md rounded-[2.5rem] border border-white/50 dark:border-white/5 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden;
+}
+
+.pill-button {
+  @apply px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 flex items-center gap-2;
+}
+
+.btn-premium {
+  @apply bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 active:scale-95 transition-all;
+}
+
+.badge-pro {
+  @apply bg-brand-primary/10 text-brand-primary border border-brand-primary/20 text-[10px] uppercase font-black px-2 py-0.5 rounded-md tracking-tighter;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200/50 dark:bg-white/5 rounded-full;
+}
+
+/* Typography Overrides */
+h1, h2, h3 {
+  @apply tracking-tight;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-secondary;
 }

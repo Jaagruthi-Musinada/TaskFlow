@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
+import OAuthSuccess from './pages/OAuthSuccess';
 
 const ProtectedRoute = ({ children }) => {
     const { token, loading } = useContext(AuthContext);
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
                     <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
                     <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+                    <Route path="/oauth-success" element={<OAuthSuccess />} />
                     <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 </Routes>
             </AuthProvider>

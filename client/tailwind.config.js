@@ -9,6 +9,8 @@ export default {
         extend: {
             colors: {
                 brand: {
+                    primary: 'var(--brand-primary)',
+                    secondary: 'var(--brand-secondary)',
                     50: '#f5f3ff',
                     100: '#ede9fe',
                     200: '#ddd6fe',
@@ -20,6 +22,14 @@ export default {
                     800: '#5b21b6',
                     900: '#4c1d95',
                     950: '#2e1065',
+                },
+                pastel: {
+                    pink: '#FFD6E8',
+                    lavender: '#E8D5FF',
+                    green: '#D5FFD6',
+                    blue: '#D5E8FF',
+                    yellow: '#FFFED5',
+                    'purple-deep': '#7C3AED',
                 },
                 dark: {
                     bg: '#0f172a',

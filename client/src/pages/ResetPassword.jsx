@@ -1,13 +1,14 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { CheckCircle2, ShieldCheck, Lock, ChevronLeft, Sparkles, KeySquare } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const ResetPassword = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { api } = useContext(AuthContext);
 
-    // Get email from previous page state, or fallback to empty string
     const [email, setEmail] = useState(location.state?.email || '');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -29,7 +30,7 @@ const ResetPassword = () => {
         setLoading(true);
         try {
             await api.post('/auth/reset-password', { email, otp, newPassword });
-            setMessage('Password reset successful! Redirecting to login...');
+            setMessage('Success! Redirecting...');
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
@@ -41,92 +42,114 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-fuchsia-100/40 via-gray-50 to-gray-50">
-            <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/50 animate-fade-in">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
-                    <p className="text-gray-500">Enter the code sent to {email}</p>
+        <div className="min-h-screen flex items-center justify-center p-6">
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl p-10 rounded-[3.5rem] shadow-2xl shadow-brand-primary/10 w-full max-w-md border border-white/50 dark:border-white/5 relative overflow-hidden"
+            >
+                <div className="absolute top-0 right-0 p-8 text-pastel-lavender -rotate-12 opacity-40">
+                    <Sparkles size={100} />
                 </div>
 
-                {error && (
-                    <div className="bg-red-50 text-red-600 p-3 mb-6 rounded-xl text-sm font-medium border border-red-100 animate-slide-up">
-                        {error}
+                <div className="relative z-10">
+                    <div className="text-center mb-10">
+                        <div className="w-16 h-16 bg-pastel-lavender text-brand-primary rounded-[1.8rem] flex items-center justify-center mx-auto mb-6 shadow-sm border border-white">
+                            <KeySquare size={28} />
+                        </div>
+                        <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">New Password</h2>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                            {email ? `Verify code sent to ${email}` : 'Secure your account'}
+                        </p>
                     </div>
-                )}
 
-                {message && (
-                    <div className="bg-green-50 text-green-600 p-3 mb-6 rounded-xl text-sm font-medium border border-green-100 animate-slide-up">
-                        {message}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    {!location.state?.email && (
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Email Address</label>
-                            <input
-                                type="email"
-                                className="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-fuchsia-500/10 focus:border-fuchsia-500 transition-all font-medium text-gray-900"
-                                placeholder="Confirm your email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
+                    {error && (
+                        <div className="bg-pastel-pink/50 text-pink-600 p-4 mb-8 rounded-2xl text-xs font-bold border border-pink-100 flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-pink-600 animate-pulse"></div>
+                            {error}
                         </div>
                     )}
 
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">OTP Code</label>
-                        <input
-                            type="text"
-                            className="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-fuchsia-500/10 focus:border-fuchsia-500 transition-all font-medium tracking-widest text-center text-lg text-gray-900"
-                            placeholder="123456"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            maxLength={6}
-                            required
-                        />
+                    {message && (
+                        <div className="bg-pastel-green/50 text-green-600 p-4 mb-8 rounded-2xl text-xs font-bold border border-green-100 flex items-center gap-3">
+                            <CheckCircle2 size={16} />
+                            {message}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {!location.state?.email && (
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Email</label>
+                                <input
+                                    type="email"
+                                    className="w-full h-14 px-6 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
+                                    placeholder="Confirm email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">6-Digit Code</label>
+                            <input
+                                type="text"
+                                className="w-full h-16 px-6 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all font-black text-center text-2xl tracking-[0.6em] text-slate-900 dark:text-white placeholder:text-slate-100 placeholder:tracking-normal"
+                                placeholder="000000"
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">New Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                <input
+                                    type="password"
+                                    className="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
+                                    placeholder="••••••••"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Confirm</label>
+                            <div className="relative">
+                                <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                <input
+                                    type="password"
+                                    className="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
+                                    placeholder="••••••••"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-[0.98] transition-all disabled:opacity-50 mt-4"
+                        >
+                            {loading ? 'Processing...' : 'Unlock Account'}
+                        </button>
+                    </form>
+
+                    <div className="mt-10 text-center">
+                        <Link to="/login" className="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-primary transition-colors">
+                            Cancel
+                        </Link>
                     </div>
-
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">New Password</label>
-                        <input
-                            type="password"
-                            className="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-fuchsia-500/10 focus:border-fuchsia-500 transition-all font-medium text-gray-900"
-                            placeholder="••••••••"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Confirm Password</label>
-                        <input
-                            type="password"
-                            className="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-fuchsia-500/10 focus:border-fuchsia-500 transition-all font-medium text-gray-900"
-                            placeholder="••••••••"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-3.5 rounded-2xl hover:opacity-90 transition-all font-bold shadow-lg shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
-                    >
-                        {loading ? 'Resetting...' : 'Reset Password'}
-                    </button>
-                </form>
-
-                <div className="mt-8 text-center">
-                    <Link to="/login" className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors">
-                        Cancel
-                    </Link>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

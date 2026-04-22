@@ -1,6 +1,8 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { Mail, Sparkles, KeyRound, ChevronLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -15,12 +17,9 @@ const ForgotPassword = () => {
         setError('');
         try {
             await api.post('/auth/forgot-password', { email });
-            // Navigate to Reset Password page, passing email in state
             navigate('/reset-password', { state: { email } });
         } catch (err) {
-            const errorMsg = err.response?.data?.message ||
-                (typeof err.response?.data?.error === 'string' ? err.response?.data?.error : JSON.stringify(err.response?.data?.error)) ||
-                'Failed to send OTP';
+            const errorMsg = err.response?.data?.message || 'Failed to send OTP';
             setError(errorMsg);
         } finally {
             setLoading(false);
@@ -28,43 +27,64 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-fuchsia-100/40 via-gray-50 to-gray-50">
-            <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/50 animate-fade-in">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
-                    <p className="text-gray-500">Enter your email to receive a reset code</p>
+        <div className="min-h-screen flex items-center justify-center p-6">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl p-10 rounded-[3.5rem] shadow-2xl shadow-brand-primary/10 w-full max-w-md border border-white/50 dark:border-white/5 relative overflow-hidden"
+            >
+                <div className="absolute top-0 right-0 p-8 text-pastel-pink rotate-12 opacity-40">
+                    <Sparkles size={100} />
                 </div>
 
-                {error && <div className="bg-red-50 text-red-600 p-3 mb-6 rounded-xl text-sm font-medium border border-red-100 animate-slide-up">{error}</div>}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Email Address</label>
-                        <input
-                            type="email"
-                            className="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-fuchsia-500/10 focus:border-fuchsia-500 transition-all font-medium placeholder:text-gray-400 text-gray-900"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                <div className="relative z-10">
+                    <div className="text-center mb-10">
+                        <div className="w-16 h-16 bg-pastel-yellow text-yellow-600 rounded-[1.8rem] flex items-center justify-center mx-auto mb-6 shadow-sm border border-white">
+                            <KeyRound size={28} />
+                        </div>
+                        <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Recover</h2>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Get back into your DailyList</p>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-3.5 rounded-2xl hover:opacity-90 transition-all font-bold shadow-lg shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                        {loading ? 'Sending...' : 'Send OTP'}
-                    </button>
-                </form>
+                    {error && (
+                        <div className="bg-pastel-pink/50 text-pink-600 p-4 mb-8 rounded-2xl text-xs font-bold border border-pink-100 flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-pink-600 animate-pulse"></div>
+                            {error}
+                        </div>
+                    )}
 
-                <div className="mt-8 text-center">
-                    <Link to="/login" className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors">
-                        ← Back to Login
-                    </Link>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Email Address</label>
+                            <div className="relative">
+                                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                <input
+                                    type="email"
+                                    className="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-200"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-[0.98] transition-all disabled:opacity-50"
+                        >
+                            {loading ? 'Sending...' : 'Send Reset Code'}
+                        </button>
+                    </form>
+
+                    <div className="mt-10 text-center">
+                        <Link to="/login" className="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-primary transition-colors">
+                            <ChevronLeft size={14} /> Back to Login
+                        </Link>
+                    </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

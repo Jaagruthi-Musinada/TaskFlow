@@ -4,10 +4,13 @@ const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const nodemailer = require('nodemailer');
 const router = express.Router();
+const authMiddleware = require('../middleware/authMiddleware');
 
 const prisma = new PrismaClient();
 
-// Configure Nodemailer (Placeholder to avoid crash if env vars missing)
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST || 'smtp.ethereal.email',
     port: process.env.EMAIL_PORT || 587,
@@ -17,6 +20,64 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS || 'pass',
     },
 });
+
+// Configure Google Strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/google/callback',
+    proxy: true
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+        console.log('--- Google OAuth Callback Invoked ---');
+        console.log('Profile ID:', profile.id);
+        console.log('Profile Email:', profile.emails?.[0]?.value);
+
+        if (!profile.emails?.[0]?.value) {
+            return done(new Error('No email found in Google profile'), null);
+        }
+
+        let user = await prisma.user.findUnique({
+            where: { googleId: profile.id }
+        });
+
+        if (!user) {
+            // Check if user with same email exists
+            user = await prisma.user.findUnique({
+                where: { email: profile.emails[0].value }
+            });
+
+            if (user) {
+                console.log('Linking existing user to Google ID');
+                user = await prisma.user.update({
+                    where: { email: profile.emails[0].value },
+                    data: { 
+                        googleId: profile.id, 
+                        avatar: profile.photos?.[0]?.value,
+                        name: profile.displayName
+                    }
+                });
+            } else {
+                console.log('Creating new Google user');
+                user = await prisma.user.create({
+                    data: {
+                        email: profile.emails[0].value,
+                        googleId: profile.id,
+                        avatar: profile.photos?.[0]?.value,
+                        name: profile.displayName,
+                        isVerified: true
+                    }
+                });
+            }
+        }
+        return done(null, user);
+    } catch (err) {
+        console.error('OCR Error in Google Strategy:', err);
+        return done(err, null);
+    }
+  }
+));
 
 
 
@@ -134,8 +195,46 @@ router.post('/login', async (req, res) => {
             return res.status(403).json({ message: 'Please verify your email first' });
         }
 
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, user: { id: user.id, email: user.email } });
+        // Always trigger MFA OTP for every successful login
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+
+        await prisma.user.update({
+            where: { email },
+            data: {
+                mfaToken: otp,
+                mfaTokenExpiry: expiry
+            }
+        });
+
+        // Send MFA OTP Email
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Login Verification Code - TaskFlow',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+                    <h2 style="color: #c026d3; text-align: center;">Security Verification</h2>
+                    <p style="color: #333;">Hello,</p>
+                    <p style="color: #333;">Using a password is only half the battle. Use the code below to complete your login:</p>
+                    <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                        <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
+                    </div>
+                    <p style="color: #333;">This code is valid for 10 minutes.</p>
+                </div>
+            `
+        };
+
+        try {
+            await transporter.sendMail(mailOptions);
+            console.log(`MFA OTP sent to ${email}: ${otp}`);
+        } catch (emailError) {
+            console.error('Error sending MFA email:', emailError);
+            console.log(`FALLBACK MFA OTP: ${otp}`);
+        }
+
+        return res.json({ mfaRequired: true, email: user.email });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
@@ -233,6 +332,102 @@ router.post('/reset-password', async (req, res) => {
         res.json({ message: 'Password reset successful' });
     } catch (error) {
         console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+// Google OAuth Routes
+router.get('/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get('/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+  (req, res) => {
+    // Successful authentication
+    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const user = JSON.stringify({ 
+        id: req.user.id, 
+        email: req.user.email, 
+        avatar: req.user.avatar,
+        name: req.user.name 
+    });
+
+    // Redirect to frontend with token
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/oauth-success?token=${token}&user=${encodeURIComponent(user)}`);
+  }
+);
+
+// Verify MFA OTP during Login
+router.post('/mfa/login-verify', async (req, res) => {
+    const { email, otp } = req.body;
+    try {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // MFA is mandatory for all users
+
+        if (user.mfaToken !== otp) {
+            return res.status(400).json({ message: 'Invalid MFA code' });
+        }
+
+        if (new Date() > new Date(user.mfaTokenExpiry)) {
+            return res.status(400).json({ message: 'MFA code has expired' });
+        }
+
+        // Clear MFA token after successful verification
+        await prisma.user.update({
+            where: { email },
+            data: {
+                mfaToken: null,
+                mfaTokenExpiry: null
+            }
+        });
+
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token, user: { id: user.id, email: user.email } });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get current user profile
+router.get('/profile', authMiddleware, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.userId },
+            select: { id: true, email: true, name: true, isPro: true, avatar: true }
+        });
+        res.json({ user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Unlock Pro Features
+router.put('/unlock-pro', authMiddleware, async (req, res) => {
+    try {
+        const user = await prisma.user.update({
+            where: { id: req.user.userId },
+            data: { isPro: true }
+        });
+        res.json({ message: 'Pro features unlocked!', user: { id: user.id, isPro: true } });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.put('/downgrade-pro', authMiddleware, async (req, res) => {
+    try {
+        const user = await prisma.user.update({
+            where: { id: req.user.userId },
+            data: { isPro: false }
+        });
+        res.json({ message: 'Pro features removed', user: { id: user.id, isPro: false } });
+    } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
 });

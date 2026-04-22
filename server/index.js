@@ -11,8 +11,11 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+const passport = require('passport');
+app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes); // Added to support http://localhost:5000/auth/google/callback
 app.use('/api/tasks', taskRoutes);
 
 app.get('/', (req, res) => {

@@ -25,6 +25,7 @@ router.post('/', authMiddleware, async (req, res) => {
                 title,
                 description,
                 deadline: deadline ? new Date(deadline) : null,
+                priority: req.body.priority || 'Low',
                 userId: req.user.userId,
             },
         });
@@ -49,6 +50,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
                 title,
                 description,
                 deadline: deadline ? new Date(deadline) : null,
+                priority: req.body.priority,
                 completed,
             },
         });
