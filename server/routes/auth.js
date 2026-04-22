@@ -109,13 +109,13 @@ router.post('/signup', async (req, res) => {
         const mailOptions = {
             from: `"TaskFlow Support" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: `Action Required: ${otp}`,
-            text: `Your TaskFlow code is: ${otp}`,
+            subject: 'Password Reset OTP - TaskFlow',
+            text: `Your TaskFlow reset code is: ${otp}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                    <h2 style="color: #c026d3; text-align: center;">Account Code</h2>
+                    <h2 style="color: #c026d3; text-align: center;">Account Access Request</h2>
                     <p style="color: #333;">Hello,</p>
-                    <p style="color: #333;">Use the code below to proceed with your TaskFlow account:</p>
+                    <p style="color: #333;">You requested a code for TaskFlow. Use the code below to proceed:</p>
                     <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
                     </div>
