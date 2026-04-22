@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { CheckCircle2, ShieldCheck, Lock, ChevronLeft, Sparkles, KeySquare } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Lock, ChevronLeft, Sparkles, KeySquare, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ResetPassword = () => {
@@ -14,6 +14,7 @@ const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
 
@@ -106,26 +107,33 @@ const ResetPassword = () => {
 
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">New Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                            <div className="relative group">
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={16} />
                                 <input
-                                    type="password"
-                                    className="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
+                                    type={showPassword ? "text" : "password"}
+                                    className="w-full h-14 pl-12 pr-12 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
                                     placeholder="••••••••"
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Confirm</label>
-                            <div className="relative">
-                                <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                            <div className="relative group">
+                                <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={16} />
                                 <input
-                                    type="password"
-                                    className="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
+                                    type={showPassword ? "text" : "password"}
+                                    className="w-full h-14 pl-12 pr-12 bg-white/50 dark:bg-slate-800 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold text-slate-900 dark:text-white"
                                     placeholder="••••••••"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}

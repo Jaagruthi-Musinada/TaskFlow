@@ -206,9 +206,9 @@ router.post('/login', async (req, res) => {
 
         // Send MFA OTP Email
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: `"TaskFlow Support" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: 'Login Verification Code - TaskFlow',
+            subject: `Action Required: ${otp} is your TaskFlow verification code`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
                     <h2 style="color: #c026d3; text-align: center;">Security Verification</h2>

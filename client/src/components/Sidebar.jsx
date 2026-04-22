@@ -171,6 +171,7 @@ const Sidebar = ({ activeFilter, setActiveFilter, isOpen, toggleSidebar, logout,
 
                 <div className="p-4 pt-0">
                     <button 
+                        id="sidebar-pro-btn"
                         onClick={user?.isPro ? () => alert("You are already PRO!") : handlePayment}
                         className={`w-full p-4 bg-gradient-to-br transition-all ${user?.isPro ? 'from-pastel-green to-green-500/80 shadow-green-500/10' : 'from-brand-primary/90 to-brand-secondary/90 shadow-purple-500/20'} rounded-3xl text-left relative overflow-hidden group shadow-lg active:scale-95`}
                     >
