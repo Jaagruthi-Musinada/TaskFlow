@@ -4,10 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, Sparkles, ArrowLeft } from 'lucide-react';
 
 const VerifyEmail = () => {
-    const { verifyEmail } = useContext(AuthContext);
+    const { verifyEmail, resendOtp } = useContext(AuthContext);
     const [otp, setOtp] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [resending, setResending] = useState(false);
     
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,6 +20,7 @@ const VerifyEmail = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setSuccess('');
         setLoading(true);
         try {
             await verifyEmail(email, otp);
@@ -26,6 +29,24 @@ const VerifyEmail = () => {
             setError(err.response?.data?.message || 'Verification failed. Please check your code.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleResend = async () => {
+        if (!email) {
+            setError('Please enter your email to resend the code.');
+            return;
+        }
+        setResending(true);
+        setError('');
+        setSuccess('');
+        try {
+            await resendOtp(email);
+            setSuccess('A new code has been sent!');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to resend code.');
+        } finally {
+            setResending(false);
         }
     };
 
@@ -48,9 +69,16 @@ const VerifyEmail = () => {
                     </div>
 
                     {error && (
-                        <div className="bg-pastel-pink/50 text-pink-600 p-4 mb-8 rounded-2xl text-xs font-bold border border-pink-100 flex items-center gap-3">
+                        <div className="bg-pastel-pink/50 text-pink-600 p-4 mb-4 rounded-2xl text-xs font-bold border border-pink-100 flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-pink-600 animate-pulse"></div>
                             {error}
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="bg-green-50 text-green-600 p-4 mb-4 rounded-2xl text-xs font-bold border border-green-100 flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-600"></div>
+                            {success}
                         </div>
                     )}
 
@@ -89,6 +117,16 @@ const VerifyEmail = () => {
                             {loading ? 'Verifying...' : 'Unlock Account'}
                         </button>
                     </form>
+
+                    <div className="mt-6 text-center">
+                        <button
+                            onClick={handleResend}
+                            disabled={resending}
+                            className="text-[10px] font-black text-brand-primary uppercase tracking-widest hover:underline disabled:opacity-50"
+                        >
+                            {resending ? 'Resending...' : 'Didn\'t get a code? Resend'}
+                        </button>
+                    </div>
 
                     <button 
                         onClick={() => navigate('/login')}

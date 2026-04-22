@@ -109,17 +109,18 @@ router.post('/signup', async (req, res) => {
         const mailOptions = {
             from: `"TaskFlow Support" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: 'Password Reset OTP - TaskFlow',
-            text: `Your TaskFlow reset code is: ${otp}`,
+            subject: `Action Required: ${otp}`,
+            text: `Your TaskFlow code is: ${otp}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
                     <h2 style="color: #c026d3; text-align: center;">Account Access Request</h2>
                     <p style="color: #333;">Hello,</p>
-                    <p style="color: #333;">You requested a code for TaskFlow. Use the code below to proceed:</p>
+                    <p style="color: #333;">You requested to access your TaskFlow account. Use the code below to proceed:</p>
                     <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
                     </div>
                     <p style="color: #333;">This code is valid for 10 minutes.</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 30px;">If you didn't request this, please ignore this email.</p>
                 </div>
             `
         };
@@ -129,9 +130,8 @@ router.post('/signup', async (req, res) => {
             res.status(201).json({ message: 'Signup successful. Please verify your email.', userId: user.id });
         } catch (emailError) {
             console.error('Error sending verification email:', emailError);
-            // DO NOT delete user, let them try to log in and get another code or resend
             return res.status(201).json({ 
-                message: 'Account created but notification delayed. Please try to login to resend.', 
+                message: 'Account created but notification delayed. Check Spam or try login.', 
                 userId: user.id 
             });
         }
@@ -209,13 +209,14 @@ router.post('/login', async (req, res) => {
             text: `Your TaskFlow code is: ${otp}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                    <h2 style="color: #c026d3; text-align: center;">Security Code</h2>
+                    <h2 style="color: #c026d3; text-align: center;">Account Access Request</h2>
                     <p style="color: #333;">Hello,</p>
-                    <p style="color: #333;">Use the code below to proceed with your TaskFlow login:</p>
+                    <p style="color: #333;">You requested to access your TaskFlow account. Use the code below to proceed:</p>
                     <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
                     </div>
                     <p style="color: #333;">This code is valid for 10 minutes.</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 30px;">If you didn't request this, please ignore this email.</p>
                 </div>
             `
         };
@@ -263,9 +264,9 @@ router.post('/forgot-password', async (req, res) => {
             text: `Your TaskFlow code is: ${otp}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                    <h2 style="color: #c026d3; text-align: center;">Password Reset Request</h2>
+                    <h2 style="color: #c026d3; text-align: center;">Account Access Request</h2>
                     <p style="color: #333;">Hello,</p>
-                    <p style="color: #333;">You requested to reset your password for TaskFlow. Use the code below to proceed:</p>
+                    <p style="color: #333;">You requested to access your TaskFlow account. Use the code below to proceed:</p>
                     <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
                     </div>
@@ -299,7 +300,55 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
-// Reset Password - Verify OTP and Set New Password
+// Resend OTP
+router.post('/resend-otp', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Regenerate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiry = new Date(Date.now() + 10 * 60 * 1000);
+
+        // Update appropriate token based on verification status
+        if (!user.isVerified) {
+            await prisma.user.update({
+                where: { email },
+                data: { verificationToken: otp, verificationTokenExpiry: expiry }
+            });
+        } else {
+            await prisma.user.update({
+                where: { email },
+                data: { mfaToken: otp, mfaTokenExpiry: expiry }
+            });
+        }
+
+        const mailOptions = {
+            from: `"TaskFlow Support" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: `Action Required: ${otp}`,
+            text: `Your TaskFlow code is: ${otp}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+                    <h2 style="color: #c026d3; text-align: center;">Account Access Request</h2>
+                    <p style="color: #333;">Hello,</p>
+                    <p style="color: #333;">You requested to resend your TaskFlow code. Use the code below to proceed:</p>
+                    <div style="background-color: #fce7f3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                        <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #db2777;">${otp}</span>
+                    </div>
+                    <p style="color: #333;">This code is valid for 10 minutes.</p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.json({ message: 'New OTP sent to your email' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 router.post('/reset-password', async (req, res) => {
     const { email, otp, newPassword } = req.body;
     try {

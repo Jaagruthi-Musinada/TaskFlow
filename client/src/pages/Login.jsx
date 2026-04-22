@@ -10,7 +10,9 @@ const Login = () => {
     const [mfaRequired, setMfaRequired] = useState(false);
     const [otp, setOtp] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const { login, verifyMfa } = useContext(AuthContext);
+    const [resending, setResending] = useState(false);
+    const [success, setSuccess] = useState('');
+    const { login, verifyMfa, resendOtp } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -38,6 +40,20 @@ const Login = () => {
         }
     };
 
+    const handleResend = async () => {
+        setResending(true);
+        setError('');
+        setSuccess('');
+        try {
+            await resendOtp(email);
+            setSuccess('A new code has been sent!');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to resend code.');
+        } finally {
+            setResending(false);
+        }
+    };
+
     const handleGoogleLogin = () => {
         const apiBase = (import.meta.env.VITE_API_URL || '').replace('/api', '');
         window.location.href = `${apiBase}/auth/google`;
@@ -62,9 +78,16 @@ const Login = () => {
                     </div>
 
                     {error && (
-                        <div className="bg-pastel-pink/50 text-pink-600 p-4 mb-8 rounded-2xl text-xs font-bold border border-pink-100 flex items-center gap-3">
+                        <div className="bg-pastel-pink/50 text-pink-600 p-4 mb-4 rounded-2xl text-xs font-bold border border-pink-100 flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-pink-600 animate-pulse"></div>
                             {error}
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="bg-green-50 text-green-600 p-4 mb-4 rounded-2xl text-xs font-bold border border-green-100 flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-600"></div>
+                            {success}
                         </div>
                     )}
 
@@ -124,6 +147,16 @@ const Login = () => {
                                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                                     required
                                 />
+                                <div className="text-center">
+                                    <button
+                                        type="button"
+                                        onClick={handleResend}
+                                        disabled={resending}
+                                        className="text-[10px] font-black text-brand-primary uppercase tracking-widest hover:underline disabled:opacity-50"
+                                    >
+                                        {resending ? 'Resending...' : 'Resend Code'}
+                                    </button>
+                                </div>
                             </div>
                         )}
 
