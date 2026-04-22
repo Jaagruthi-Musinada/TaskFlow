@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Plus, Search, Filter, Calendar as CalendarIcon, Clock, CheckCircle2, Circle, Trash2, Edit3, ChevronRight, Zap, Target, Star, X, Sparkles } from 'lucide-react';
+import { Plus, Search, Filter, Calendar as CalendarIcon, Clock, CheckCircle2, Circle, Trash2, Edit3, ChevronRight, Zap, Target, Star, X, Sparkles, Menu } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -135,14 +135,35 @@ const Dashboard = () => {
                 user={user}
             />
 
+            {/* Backdrop for mobile */}
+            <AnimatePresence>
+                {isSidebarOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="fixed inset-0 z-40 bg-slate-900/10 backdrop-blur-sm lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
             <main className={`transition-all duration-700 ease-out p-6 lg:p-12 ${isSidebarOpen ? 'lg:ml-80' : 'ml-0'}`}>
                 <header className="max-w-4xl mx-auto mb-10 flex items-center justify-between">
-                    <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">My Dashboard</p>
-                        <h1 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3">
-                            {focusMode ? 'Focus Active' : 'Current Focus'}
-                            <div className={`w-2 h-2 rounded-full animate-pulse ${focusMode ? 'bg-pink-500 shadow-lg shadow-pink-500/50' : 'bg-brand-primary'}`} />
-                        </h1>
+                    <div className="flex items-center gap-4">
+                        <button 
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            className="w-12 h-12 bg-white dark:bg-slate-900 border border-white/50 dark:border-white/5 rounded-2xl flex items-center justify-center text-slate-400 lg:hidden shadow-sm"
+                        >
+                            <Menu size={20} />
+                        </button>
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">My Dashboard</p>
+                            <h1 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+                                {focusMode ? 'Focus Active' : 'Current Focus'}
+                                <div className={`w-2 h-2 rounded-full animate-pulse ${focusMode ? 'bg-pink-500 shadow-lg shadow-pink-500/50' : 'bg-brand-primary'}`} />
+                            </h1>
+                        </div>
                     </div>
                     
                     <div className="flex items-center gap-3">

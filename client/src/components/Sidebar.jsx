@@ -1,4 +1,4 @@
-import { LayoutDashboard, CheckSquare, Clock, Calendar, Moon, Sun, LogOut, User as UserIcon, Sparkles, BarChart3, Palette, Zap } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, Clock, Calendar, Moon, Sun, LogOut, User as UserIcon, Sparkles, BarChart3, Palette, Zap, X } from 'lucide-react';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -84,14 +84,22 @@ const Sidebar = ({ activeFilter, setActiveFilter, isOpen, toggleSidebar, logout,
     };
 
     return (
-        <aside className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-all duration-700 ease-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <aside className={`fixed inset-y-0 left-0 z-50 w-80 transform transition-all duration-700 ease-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             <div className="h-[calc(100vh-2rem)] bg-white/70 dark:bg-slate-900/60 backdrop-blur-3xl border border-white/50 dark:border-white/5 flex flex-col m-4 rounded-[3rem] shadow-2xl shadow-purple-500/5 overflow-hidden">
                 
                 {/* Logo & Profile */}
                 <div className="p-8 pb-4">
-                    <div className="flex items-center gap-3 mb-10">
-                        <div className="w-10 h-10 bg-brand-primary rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-brand-primary/20">D</div>
-                        <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-widest uppercase text-xs">DailyList</h1>
+                    <div className="flex items-center justify-between gap-3 mb-10">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-brand-primary rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-brand-primary/20">D</div>
+                            <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-widest uppercase text-xs">DailyList</h1>
+                        </div>
+                        <button 
+                            onClick={toggleSidebar}
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl lg:hidden text-slate-400"
+                        >
+                            <X size={20} />
+                        </button>
                     </div>
                     
                     <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-white/5 rounded-3xl border border-white/50 dark:border-white/5 mb-8">
