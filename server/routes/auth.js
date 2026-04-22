@@ -42,7 +42,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             let user = await prisma.user.findUnique({
                 where: { email: profile.emails[0].value }
             });
-
+    
             if (user) {
                 console.log('Linking existing user to Google ID');
                 user = await prisma.user.update({
@@ -65,14 +65,16 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
                     }
                 });
             }
+            return done(null, user);
+        } catch (err) {
+            console.error('Google Auth Error:', err);
+            return done(err, null);
         }
-        return done(null, user);
-    } catch (err) {
-        console.error('OCR Error in Google Strategy:', err);
-        return done(err, null);
-    }
-  }
-));
+      }
+    ));
+} else {
+    console.warn('⚠️ Google OAuth keys missing. Google Login will be disabled.');
+}
 
 
 
