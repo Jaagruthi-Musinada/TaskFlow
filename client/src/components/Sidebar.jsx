@@ -173,21 +173,16 @@ const Sidebar = ({ activeFilter, setActiveFilter, isOpen, toggleSidebar, logout,
                     <button 
                         id="sidebar-pro-btn"
                         onClick={user?.isPro ? () => alert("You are already PRO!") : handlePayment}
-                        className={`w-full p-4 bg-gradient-to-br transition-all ${user?.isPro ? 'from-pastel-green to-green-500/80 shadow-green-500/10' : 'from-brand-primary/90 to-brand-secondary/90 shadow-purple-500/20'} rounded-3xl text-left relative overflow-hidden group shadow-lg active:scale-95`}
+                        className={`w-full p-4 bg-gradient-to-br transition-all ${user?.isPro ? 'from-green-400 to-green-600 shadow-green-500/20' : 'from-brand-primary to-brand-secondary shadow-brand-primary/30'} rounded-3xl text-left relative overflow-hidden group shadow-lg active:scale-95`}
                     >
                         <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg text-white text-[10px] font-black z-20">
                             ₹100
                         </div>
-                        <img 
-                            src="/assets/pro-banner.png" 
-                            className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay group-hover:scale-110 transition-transform duration-1000" 
-                            alt="Pro" 
-                        />
                         <div className="relative z-10">
-                            <p className="text-white font-black text-[10px] uppercase tracking-widest mb-1 opacity-70 text-shadow-sm">
+                            <p className="text-white font-black text-[10px] uppercase tracking-widest mb-1 opacity-90 text-shadow-sm">
                                 {user?.isPro ? 'Active' : 'Upgrade'}
                             </p>
-                            <h3 className="text-white font-bold text-sm mb-3">
+                            <h3 className="text-white font-bold text-sm mb-3 text-shadow-sm">
                                 {user?.isPro ? 'Welcome Pro!' : 'Go Pro Today'}
                             </h3>
                             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-white">

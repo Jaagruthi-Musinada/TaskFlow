@@ -162,37 +162,6 @@ const Dashboard = () => {
                 </header>
 
                 <div className="max-w-4xl mx-auto px-4">
-                    {/* Premium Pro Promo Banner */}
-                    {!user?.isPro && (
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-[length:200%_auto] animate-gradient-slow p-[1px] rounded-[2.5rem] mb-12 shadow-2xl shadow-brand-primary/20 group relative overflow-hidden"
-                        >
-                            <div className="bg-white dark:bg-slate-900 rounded-[2.45rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 blur-[100px] -mr-32 -mt-32 transition-transform group-hover:scale-150 duration-700" />
-                                
-                                <div className="relative z-10 text-center md:text-left">
-                                    <div className="flex items-center gap-2 mb-4 justify-center md:justify-start">
-                                        <div className="bg-pastel-lavender p-2 rounded-xl text-brand-primary">
-                                            <Sparkles size={20} />
-                                        </div>
-                                        <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em]">Premium Experience</span>
-                                    </div>
-                                    <h2 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-3 tracking-tighter">Unlock Your Full Potential</h2>
-                                    <p className="text-slate-400 font-bold text-sm max-w-sm">Upgrade for **Insight Hub**, **Focus Mode**, and Advanced Priority Engine.</p>
-                                </div>
-
-                                <button 
-                                    onClick={() => document.getElementById('sidebar-pro-btn')?.click()}
-                                    className="relative z-10 px-8 py-5 bg-brand-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-                                >
-                                    Go Pro Today
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-
                     {user?.isPro && (
                         <div className="mb-10 grid grid-cols-1 gap-6">
                             {/* Insight Hub */}
