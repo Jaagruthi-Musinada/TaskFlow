@@ -45,7 +45,8 @@ body {
 }
 
 .btn-premium {
-  @apply bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 active:scale-95 transition-all;
+  @apply bg-gradient-to-r from-violet-500 to-pink-500 text-white shadow-lg active:scale-95 transition-all outline-none;
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);
 }
 
 .badge-pro {
