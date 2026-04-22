@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     }, [token, api]);
 
     const login = async (email, password) => {
-        const res = await api.post('/auth/login', { email, password });
+        const res = await api.post('/auth/login', { email: email.toLowerCase(), password });
         if (res.data.token) {
             setToken(res.data.token);
             setUser(res.data.user);
@@ -68,12 +68,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     const signup = async (email, password) => {
-        const res = await api.post('/auth/signup', { email, password });
+        const res = await api.post('/auth/signup', { email: email.toLowerCase(), password });
         return res.data; // Don't set token yet
     };
 
     const verifyEmail = async (email, otp) => {
-        const res = await api.post('/auth/verify-email', { email, otp });
+        const res = await api.post('/auth/verify-email', { email: email.toLowerCase(), otp });
         setToken(res.data.token);
         setUser(res.data.user);
         return res.data;

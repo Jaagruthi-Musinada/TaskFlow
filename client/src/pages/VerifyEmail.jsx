@@ -20,7 +20,7 @@ const VerifyEmail = () => {
         setError('');
         setLoading(true);
         try {
-            await verifyEmail(email, otp);
+            await verifyEmail(email.toLowerCase(), otp);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Verification failed. Please check your code.');
@@ -44,7 +44,7 @@ const VerifyEmail = () => {
                             <ShieldCheck size={28} />
                         </div>
                         <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Verify Your Account</h2>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">We sent a code to {email || 'your email'}</p>
+                        <p className="text-xs font-bold text-slate-400 tracking-widest">We sent a code to <span className="text-brand-primary">{email || 'your email'}</span></p>
                     </div>
 
                     {error && (
