@@ -31,6 +31,9 @@ const Login = () => {
             const errorMsg = err.response?.data?.message ||
                 (typeof err.response?.data?.error === 'string' ? err.response?.data?.error : 'Login failed');
             setError(errorMsg);
+            if (errorMsg.toLowerCase().includes('verify your email')) {
+                navigate('/verify-email', { state: { email } });
+            }
         }
     };
 

@@ -15,7 +15,7 @@ const Signup = () => {
         setError('');
         try {
             await signup(email, password);
-            navigate('/login');
+            navigate('/verify-email', { state: { email } });
         } catch (err) {
             setError(err.response?.data?.message || 'Signup failed');
         }
