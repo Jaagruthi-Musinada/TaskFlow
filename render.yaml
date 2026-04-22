@@ -13,9 +13,15 @@ services:
           name: dailylist-db
           property: connectionString
       - key: RAZORPAY_KEYID
-        sync: false # Set manually in dashboard
+        value: rzp_test_SgTkNtGzvPwqYn
       - key: RAZORPAY_KEY_SECRET
-        sync: false # Set manually in dashboard
+        value: n6jFf00kJ5xjIatCwEuw3To8
+      - key: GOOGLE_CLIENT_ID
+        sync: false # Set manually in Render Dashboard
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false # Set manually in Render Dashboard
+      - key: GOOGLE_CALLBACK_URL
+        sync: false # Set manually to: https://YOUR-RENDER-URL.onrender.com/auth/google/callback
       - key: JWT_SECRET
         generateValue: true
       - key: NODE_ENV
