@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, Mail, Lock, Chrome, Sparkles } from 'lucide-react';
+import { LogIn, Mail, Lock, Chrome, Sparkles, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -9,6 +9,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const [mfaRequired, setMfaRequired] = useState(false);
     const [otp, setOtp] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const { login, verifyMfa } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -89,16 +90,23 @@ const Login = () => {
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Password</label>
                                         <Link to="/forgot-password" className="text-[10px] font-black text-brand-primary tracking-widest uppercase underline">Forgot?</Link>
                                     </div>
-                                    <div className="relative">
-                                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                    <div className="relative group">
+                                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={16} />
                                         <input
-                                            type="password"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/50 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold placeholder:text-slate-200"
+                                            type={showPassword ? "text" : "password"}
+                                            className="w-full h-14 pl-12 pr-12 bg-white/50 border border-white/50 rounded-2xl focus:outline-none focus:border-brand-primary transition-all text-sm font-bold placeholder:text-slate-200"
                                             placeholder="••••••••"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                 </div>
                             </>
