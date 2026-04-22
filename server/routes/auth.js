@@ -21,30 +21,25 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Configure Google Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/callback',
-    proxy: true
-  },
-  async (accessToken, refreshToken, profile, done) => {
-    try {
-        console.log('--- Google OAuth Callback Invoked ---');
-        console.log('Profile ID:', profile.id);
-        console.log('Profile Email:', profile.emails?.[0]?.value);
-
-        if (!profile.emails?.[0]?.value) {
-            return done(new Error('No email found in Google profile'), null);
-        }
-
-        let user = await prisma.user.findUnique({
-            where: { googleId: profile.id }
-        });
-
-        if (!user) {
-            // Check if user with same email exists
-            user = await prisma.user.findUnique({
+// Configure Google Strategy (Only if keys provided)
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    passport.use(new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: '/auth/google/callback',
+        proxy: true
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+            console.log('--- Google OAuth Callback Invoked ---');
+            console.log('Profile ID:', profile.id);
+            console.log('Profile Email:', profile.emails?.[0]?.value);
+    
+            if (!profile.emails?.[0]?.value) {
+                return done(new Error('No email found in Google profile'), null);
+            }
+    
+            let user = await prisma.user.findUnique({
                 where: { email: profile.emails[0].value }
             });
 
