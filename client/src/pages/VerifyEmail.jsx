@@ -20,7 +20,7 @@ const VerifyEmail = () => {
         setError('');
         setLoading(true);
         try {
-            await verifyEmail(email.toLowerCase(), otp);
+            await verifyEmail(email, otp);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Verification failed. Please check your code.');
