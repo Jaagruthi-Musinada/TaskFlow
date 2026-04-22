@@ -13,9 +13,9 @@ services:
           name: dailylist-db
           property: connectionString
       - key: RAZORPAY_KEYID
-        value: rzp_test_SgTkNtGzvPwqYn
+        sync: false # Set manually in Render Dashboard
       - key: RAZORPAY_KEY_SECRET
-        value: n6jFf00kJ5xjIatCwEuw3To8
+        sync: false # Set manually in Render Dashboard
       - key: GOOGLE_CLIENT_ID
         sync: false # Set manually in Render Dashboard
       - key: GOOGLE_CLIENT_SECRET
