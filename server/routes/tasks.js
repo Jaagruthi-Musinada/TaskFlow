@@ -12,6 +12,16 @@ const tokenize = (text) => {
     return text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(t => t.length > 0);
 };
 
+// Health Check / Redis Ping
+router.get('/ping', async (req, res) => {
+    try {
+        const result = await redis.ping();
+        res.json({ message: result }); // Should return 'PONG'
+    } catch (err) {
+        res.status(500).json({ message: 'Redis is down', error: err.message });
+    }
+});
+
 const indexTaskInRedis = async (task) => {
     const { id, title, userId, priority, deadline, completed } = task;
     const taskKey = `task:${id}`;
