@@ -26,7 +26,17 @@ services:
         generateValue: true
       - key: NODE_ENV
         value: production
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: dailylist-redis
+          property: connectionString
 
 databases:
   - name: dailylist-db
     plan: free
+
+redis:
+  - name: dailylist-redis
+    plan: free
+    ipAllowList: [] # Only allow internal connections
