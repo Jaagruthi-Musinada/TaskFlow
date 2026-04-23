@@ -10,6 +10,8 @@ const Dashboard = () => {
     const [activeFilter, setActiveFilter] = useState('all');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
     
     // Add Task State
@@ -27,7 +29,34 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchTasks();
+        // One-time sync for existing tasks
+        api.post('/tasks/sync-all').catch(err => console.error("Initial Sync Error:", err));
     }, []);
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (searchQuery) {
+                performSearch();
+            } else {
+                setSearchResults([]);
+                setIsSearching(false);
+            }
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery]);
+
+    const performSearch = async () => {
+        setIsSearching(true);
+        try {
+            const res = await api.get(`/tasks/search?q=${searchQuery}`);
+            setSearchResults(res.data);
+        } catch (err) {
+            console.error("Search Error:", err);
+        } finally {
+            setIsSearching(false);
+        }
+    };
 
     const fetchTasks = async () => {
         try {
@@ -102,21 +131,19 @@ const Dashboard = () => {
         return 'bg-pastel-blue text-blue-600';
     };
 
-    const filteredTasks = tasks.filter(task => {
-        const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const filteredTasks = searchQuery ? searchResults : tasks.filter(task => {
         const matchesFocus = focusMode ? task.priority === 'High' : true;
-        
         if (!matchesFocus) return false;
 
-        if (activeFilter === 'completed') return task.completed && matchesSearch;
+        if (activeFilter === 'completed') return task.completed;
         if (activeFilter === 'today') {
             const today = new Date().toDateString();
-            return new Date(task.deadline).toDateString() === today && matchesSearch;
+            return new Date(task.deadline).toDateString() === today;
         }
         if (activeFilter === 'upcoming') {
-            return new Date(task.deadline) > new Date() && !task.completed && matchesSearch;
+            return new Date(task.deadline) > new Date() && !task.completed;
         }
-        return matchesSearch;
+        return true;
     });
 
     const completionRate = tasks?.length > 0 
